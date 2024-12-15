@@ -57,7 +57,7 @@
   ![image](https://github.com/user-attachments/assets/60eedb76-2fca-4855-940d-1f5528a52664)
 
   - **스프링 초기설정**
-    - &nbsp;
+    - 스프링 시큐리티, 인코딩, jackson, WebSocket, 자바버전업, 스프링 버전업
   - **로그인&로그아웃**
     - 스프링 시큐리티를 사용하여 로그인처리, 로그아웃처리
   - **관리자 직원등록**
