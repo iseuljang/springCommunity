@@ -111,18 +111,177 @@
     - &nbsp;
    
 
-3️⃣ 
+3️⃣ 채팅방 검색결과 초기화
   - 문제 배경
-    - &nbsp;
+    - 채팅방 이름과 채팅 참가자 이름으로 해당 채팅방을 검색하면 setInterval이 돌면서 다시 검색전 채팅목록으로 되돌아가는 문제 발생 
   - 해결 방법
-    - &nbsp;
+    - setInterval을 함수로 만들어 메인채팅방 상태일때의 setInterval과 검색어를 입력했을때의 setInterval을 분리하여 적용
   - 코드 비교
     - 
       - 수정전
       ```
+      window.onload = function(){
+        setInterval(function(){
+          $.ajax({
+                url: "<%= request.getContextPath() %>/chat/chat.do",
+                type: "GET",
+                success: function(data) {
+                  let html = ``;
+                  for(item of data.list){
+                html += `
+                <li onclick="chatRoomView(\${item.chat_no},'\${item.chat_users_name}');">
+                  <div class="chat_item">
+                    <div class="message_wrapper">
+                           <div class="chat_name">\${item.chat_users_name}</div>`;
+                      if(item.unread_count > 0) {
+                        html += `<div class="unread_count">\${item.unread_count}</div>`;
+                      }else{
+                        html += `<div></div>`;
+                      }
+                      html += `</div>
+                          <div class="last_message_wrapper">
+                              <div class="last_message">\${item.chat_message_content || ""}</div>
+                              <div class="last_message_time">\${item.chat_message_time || ""}</div>
+                          </div>
+                      </div>
+                </li>`;
+              }
+                    $("#chatRoomList").html(html);
+                }
+            });
+        },1000);
+      }
       ```
       - 수정후
       ```
+      window.onload = function(){
+        startChatInterval();
+      }
+      let chatInterval;
+
+      function startChatInterval() {
+          chatInterval = setInterval(function(){
+              $.ajax({
+                  url: "<%= request.getContextPath() %>/chat/chat.do",
+                  type: "GET",
+                  success: function(data) {
+                  	let html = ``;
+      	        	for(item of data.list){
+      					html += `
+      					<li onclick="chatRoomView(\${item.chat_no},'\${item.chat_users_name}');">
+      						<div class="chat_item">
+      							<div class="message_wrapper">
+      				           	 <div class="chat_name">
+      					           	\${item.chat_users_name}`;
+      		           	if(item.user_count > 2) {   	
+      	           		html += `   <span class="user_count">\${item.user_count}</span>`;
+      		           	}
+      		           	html += `</div>`;
+      		            if(item.unread_count > 0) {
+      		           		html += `<div class="unread_count">\${item.unread_count}</div>`;
+      		            }else{
+      		            	html += `<div></div>`;
+      		            }
+      		            html += `</div>
+      		            		<div class="last_message_wrapper">
+      				                <div class="last_message">\${item.chat_message_content || ""}</div>
+      				                <div class="last_message_time">\${item.chat_message_time || ""}</div>
+      				            </div>
+      				        </div>
+      					</li>`;
+      				}
+      	            $("#chatRoomList").html(html);
+                  }
+              });
+          }, 1000);
+      }
+      
+      function stopChatInterval() {
+          clearInterval(chatInterval);
+      }
+      
+      function startChatSearchInterval(searchValue) {
+          chatInterval = setInterval(function(){
+              $.ajax({
+                  url: "<%= request.getContextPath() %>/chat/chat.do",
+                  type: "GET",
+                  data: { search_value: searchValue },
+                  success: function(data) {
+                  	let html = ``;
+      	        	for(item of data.list){
+      					html += `
+      					<li onclick="chatRoomView(\${item.chat_no},'\${item.chat_users_name}');">
+      						<div class="chat_item">
+      							<div class="message_wrapper">
+      				           	 <div class="chat_name">
+      					           	\${item.chat_users_name}`;
+      		           	if(item.user_count > 2) {   	
+      	           		html += `   <span class="user_count">\${item.user_count}</span>`;
+      		           	}
+      		           	html += `</div>`;
+      		            if(item.unread_count > 0) {
+      		           		html += `<div class="unread_count">\${item.unread_count}</div>`;
+      		            }else{
+      		            	html += `<div></div>`;
+      		            }
+      		            html += `</div>
+      		            		<div class="last_message_wrapper">
+      				                <div class="last_message">\${item.chat_message_content || ""}</div>
+      				                <div class="last_message_time">\${item.chat_message_time || ""}</div>
+      				            </div>
+      				        </div>
+      					</li>`;
+      				}
+      	            $("#chatRoomList").html(html);
+                  }
+              });
+          }, 1000);
+      }
+
+      function chatSearch() {
+        const searchValue = $("#search_input").val();
+        
+        stopChatInterval();
+        
+        $.ajax({
+            url: "<%= request.getContextPath() %>/chat/chat.do",
+            type: "GET",
+            data: { search_value: searchValue },
+            success: function(data) {
+                let html = '';
+                for(item of data.list) {
+                    html += `
+                        <li onclick="chatRoomView(\${item.chat_no}, '\${item.chat_users_name}');">
+                            <div class="chat_item">
+                                <div class="message_wrapper">
+                                    <div class="chat_name">
+                                        \${item.chat_users_name}`;
+                    if (item.user_count > 2) {
+                        html += `       <span class="user_count">\${item.user_count}</span>`;
+                    }
+                    html += `</div>`;
+                    if (item.unread_count > 0) {
+                        html += `<div id="unread_count_\${item.chat_no}" class="unread_count">\${item.unread_count || ""}</div>`;
+                    } else {
+                        html += `<div id="unread_count_\${item.chat_no}">\${item.unread_count || ""}</div>`;
+                    }
+                    html += `</div>
+                                <div class="last_message_wrapper">
+                                    <div class="last_message">\${item.chat_message_content || ""}</div>
+                                    <div class="last_message_time">\${item.chat_message_time || ""}</div>
+                                </div>
+                            </div>
+                        </li>`;
+                }
+    
+                $("#chatRoomList").html(html); // 검색 결과를 업데이트
+                startChatSearchInterval(searchValue);
+            },
+            error: function(err) {
+                console.error("검색 중 오류 발생:", err);
+            }
+        });
+    }
       ``` 
   - 해당 경험을 통해 알게 된 점
     - &nbsp;
