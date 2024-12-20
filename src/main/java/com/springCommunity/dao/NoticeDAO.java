@@ -40,4 +40,8 @@ public class NoticeDAO {
 	public int selectCntFreeByUid(String user_id) {
 		return sqlSession.selectOne(namespace+".selectCntFreeByUid", user_id);
 	}
+	
+	public int updateNotice(NoticeVO vo) {
+		return sqlSession.update(namespace+".updateNotice", vo);
+	}
 }

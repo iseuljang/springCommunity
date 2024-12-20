@@ -1,5 +1,7 @@
 package com.springCommunity.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.springCommunity.service.ChatService;
 import com.springCommunity.vo.*;
-
 
 @RequestMapping(value="/chat")
 @Controller
@@ -28,7 +30,7 @@ public class CharController {
 	ChatService chatService;
 	
 	@ResponseBody
-    @RequestMapping(value = "/chat.do", produces = "application/json; charset=utf-8")
+    @RequestMapping(value = "/chat.do", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public Map<String,Object> chat(Model model,SearchVO searchVO) {
     	// 현재 인증된 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -54,16 +56,20 @@ public class CharController {
 
         
         Map<String,Object> map = new HashMap<String, Object>();
-    	
-    	int total = chatService.selectTotal(searchVO);
 		
 		List<ChatVO> list = chatService.selectAll(searchVO);
 		
 		model.addAttribute("list", list);
-		model.addAttribute("total", total);
     	
-		map.put("list", list);
-		map.put("total", total);
+		if(list.isEmpty()) {
+			if(!searchVO.getSearch_value().isEmpty()) {
+	            map.put("message", "검색한 내용에 맞는 채팅방이 없습니다.");
+	        }else {
+	            map.put("message", "현재 채팅방이 없습니다. 새 채팅방을 생성해 보세요.");
+	        }
+		}else{
+			map.put("list", list);
+		}
 		
         return map;
     }
@@ -86,10 +92,6 @@ public class CharController {
 		searchVO.setUser_id(loginUser);
 		
 		List<UserInfoVO> list = chatService.searchUsers(searchVO);
-		if(list.size()>0) {
-			System.out.println("user =>"+list.get(0).getUser_id());
-		}
-		System.out.println("list 길이" + list.size());
 		
 		return list;
 	}
@@ -100,12 +102,12 @@ public class CharController {
     public String createChatRoom(@RequestBody Map<String,Object> data) {
     	System.out.println("createChatRoom controller 실행");
         String user_id = (String)data.get("user_id");
+        String user_name = (String)data.get("user_name");
         System.out.println("controller createChatRoom user_id "+user_id);
-        String chat_name = (String)data.get("chat_name");
+        
         List<String> users = (List<String>)data.get("users");
         
         ChatVO chatVO = new ChatVO();
-        chatVO.setChat_name(chat_name);
         chatVO.setUser_id(user_id);
         
         // 채팅방의 chat_group 값 설정 (유저 수에 따라)
@@ -115,20 +117,17 @@ public class CharController {
         // 채팅방 생성
         int result = chatService.insertRoom(chatVO);
         
+        String chat_users_name = (String)data.get("chat_users_name"); 
         if(result > 0) {
             for(String user : users) {
-            	ChatVO insertVO = new ChatVO();
-                System.out.println("insert 후 chat_no: " + chatVO.getChat_no());
-                System.out.println("chatVO.getCHAT_NO() user " + user);
-                insertVO.setChat_no(chatVO.getChat_no());
-                insertVO.setUser_id(user);
-                chatService.insertRoomAfterUser(insertVO);
+                if(chatGroup == 1) {
+                	chatService.addChatUser(chatVO.getChat_no(), user, user_name);
+                }else {
+                	chatService.addChatUser(chatVO.getChat_no(), user, chat_users_name);
+                }
             }
-            ChatVO insertVO2 = new ChatVO();
-            insertVO2.setChat_no(chatVO.getChat_no());
-            insertVO2.setUser_id(chatVO.getUser_id());
-            chatService.insertRoomAfterUser(insertVO2);
-            return chatVO.getChat_no()+":"+chat_name;
+            chatService.addChatUser(chatVO.getChat_no(), chatVO.getUser_id(), chat_users_name);
+            return chatVO.getChat_no()+":"+chat_users_name;
         }else {
             System.out.println("채팅방 생성 실패");
             return "0";
@@ -149,11 +148,32 @@ public class CharController {
     
     @ResponseBody
     @RequestMapping(value = "/leaveChatRoom.do", method = RequestMethod.POST)
-    public String leaveChatRoom(ChatVO chatVO) {
+    public String leaveChatRoom(ChatVO chatVO,String user_name) {
     	
     	int result = chatService.leaveChatRoom(chatVO);
     	if(result > 0) {
     		System.out.println("채팅방 나가기 성공");
+    		
+    		//채팅방 참가하고 있는 회원의 참가상태 확인
+    		int count = chatService.chatStateCount(chatVO);
+    		
+    		if(count == 0) {
+    			//참가자들 전원이 나감상태일때 채팅방 상태 비활성화처리
+    			chatService.updateChatState(chatVO);
+    		}
+    		
+    		//그룹 채팅일 경우 알림 메시지 추가
+            if(chatVO.getChat_group() == 0) {
+            	chatVO.setChat_message_content(user_name + "님이 나갔습니다.");
+                chatService.sendSystemMessage(chatVO);
+                
+                int chatState = chatService.chatStateCount(chatVO);
+    			if(chatState <= 2) {
+    				//그룹(0)에서 1대1채팅(1)으로 변경
+    				chatService.updateChatOne(chatVO.getChat_no());
+    			}
+            }
+    		
     		return "Success";
     	}else {
     		System.out.println("채팅방 나가기 실패");
@@ -180,14 +200,113 @@ public class CharController {
     }
     
     @ResponseBody
-    @RequestMapping(value="/loadMessage.do", produces = "application/json; charset=utf-8")
+    @RequestMapping(value="/loadMessage.do", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public List<ChatMessageVO> loadMessage(int chat_no){
-    	System.out.println("loadMessage 실행1");
     	List<ChatMessageVO> list = chatService.loadMessage(chat_no);
-    	System.out.println("loadMessage 실행2");
-    	for(ChatMessageVO vo : list) {
-    		System.out.println("loadChat : " + vo.getChat_message_content());
-    	}
     	return list;
+    }
+    
+    @RequestMapping(value ="/messagesRead.do", method = RequestMethod.POST, produces = "application/text; charset=utf-8")
+    public void messagesRead(@RequestBody ChatVO chatVO) {
+        int result = chatService.updateReadState(chatVO);
+    }
+    
+   // 채팅방 이름 변경(참가자 전체변경)
+    @ResponseBody
+    @PostMapping("/updateChatName.do")
+    public String updateChatName(ChatVO vo) {
+        int result = chatService.updateChatName(vo);
+        if(result > 0) {
+        	return "Success";
+        }else {
+        	return "Fail";
+        }
+    }
+    
+    // 채팅방 이름 변경(참가자 각자변경)
+    @ResponseBody
+    @PostMapping("/updateChatUserName.do")
+    public String updateChatUserName(ChatVO vo) {
+        int result = chatService.updateChatUserName(vo);
+        if(result > 0) {
+        	return "Success";
+        }else {
+        	return "Fail";
+        }
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "/addUser.do", method = RequestMethod.POST, produces = "application/text; charset=utf-8")
+    public String addChatUser(@RequestBody Map<String, Object> data) {
+        List<String> users = (List<String>)data.get("users"); // 초대할 사용자 리스트
+        int chat_no = (Integer)data.get("chat_no");          // 채팅방 번호
+        String chat_users_name = (String)data.get("chat_users_name"); // 채팅방 이름
+
+        int result = 0;
+
+        List<ChatVO> list = chatService.chatInfo(chat_no); // 기존 채팅 정보 조회
+        // 채팅 그룹이 1인 경우 이름 업데이트
+        if(!list.isEmpty() && list.get(0).getChat_group() == 1) {
+            ChatVO vo = list.get(0); // 첫 번째 채팅 정보 사용
+            vo.setChat_users_name(chat_users_name);
+            result = chatService.updateChatName(vo);
+            chatService.updateChatGroup(chat_no);
+        }
+
+        // 사용자 추가 처리
+        List<String> beforeUserNames = new ArrayList<>();
+        for(ChatVO vo : list) {
+            beforeUserNames.add(vo.getUser_name());
+        }
+
+        // 모든 사용자 처리
+        for(String user : users) {
+            int addResult = chatService.addChatUser(chat_no, user, chat_users_name);
+            if(addResult <= 0) {
+                return "Fail"; // 한 명이라도 추가 실패 시 Fail 반환
+            }
+        }
+
+        // 사용자 추가 후 결과 확인
+        List<ChatVO> afterList = chatService.chatInfo(chat_no); 
+        List<String> afterUserNames = new ArrayList<>();
+        for(ChatVO afterUserName : afterList) {
+            afterUserNames.add(afterUserName.getUser_name());
+        }
+
+        afterUserNames.removeAll(beforeUserNames); 
+
+        // 초대 메시지 전송
+        for(String afterUserName : afterUserNames) {
+            ChatVO message = new ChatVO();
+            message.setChat_no(chat_no);
+            message.setChat_message_content(afterUserName + "님이 초대되었습니다.");
+            chatService.sendSystemMessage(message);
+        }
+
+        return "Success"; 
+    }
+    
+    @ResponseBody
+    @PostMapping("/chatName.do")
+    public ChatVO chatName(ChatVO vo) {
+        return chatService.chatName(vo);
+    }
+    
+    @ResponseBody
+    @PostMapping("/updateChatTop.do")
+    public String updateChatTop(ChatVO vo) {
+        int result = chatService.updateChatTop(vo); 
+        if(result > 0) {
+        	return("Success");
+        }else {
+        	return("Fail");
+        }
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "/unreadMessageCounts.do", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    public int unreadMessageCounts(String user_id) {
+        return chatService.unreadMessageCounts(user_id);
     }
 }

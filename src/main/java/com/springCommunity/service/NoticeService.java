@@ -17,4 +17,6 @@ public interface NoticeService {
 	
 	public int selectCntFreeByUid(String user_id);
 	
+	public int updateNotice(NoticeVO vo);
+	
 }

@@ -11,13 +11,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.springCommunity.service.UserService;
 import com.springCommunity.vo.UserInfoVO;
 
 @Controller
 public class UserController {
 	
-	@Autowired
-	SqlSession sqlSession;
+    @Autowired
+	UserService userService;
 	
 	
 	@RequestMapping(value="/join.do", method = RequestMethod.GET)
@@ -33,7 +34,7 @@ public class UserController {
 		userInfoVO.setUser_password(encodedPassword);
 		System.out.println("암호화된 비밀번호: " + encodedPassword);
 		
-		int result = sqlSession.insert("com.springCommunity.mapper.userMapper.insert", userInfoVO);
+		int result = userService.insertUser(userInfoVO);
 		
 		if(result > 0) {
 			System.out.println("회원가입성공");

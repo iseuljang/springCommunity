@@ -16,6 +16,12 @@ public class NoticeVO extends UserInfoVO {
 	public void setPost_no(int post_no) {
 		this.post_no = post_no;
 	}
+	public String getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
+	}
 	public String getPost_title() {
 		return post_title;
 	}
@@ -45,12 +51,6 @@ public class NoticeVO extends UserInfoVO {
 	}
 	public void setPost_type(String post_type) {
 		this.post_type = post_type;
-	}
-	public String getUser_id() {
-		return user_id;
-	}
-	public void setUser_id(String user_id) {
-		this.user_id = user_id;
 	}
 	
 	

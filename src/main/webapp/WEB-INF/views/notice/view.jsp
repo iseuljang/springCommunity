@@ -21,11 +21,7 @@
 						</tr>
 				</table>
 				<div class="post-actions">
-					<button class="edit-button" onclick="document.modifyfrm.submit();">수정</button>
-					<form name="modifyfim" action="modify.do" method="get">
-					
-					</form>
-					
+					<button class="edit-button" onclick="location.href='<%=request.getContextPath() %>/notice/modify.do?post_no=${vo.post_no }'">수정</button>
 					<button class="delete-button" onclick="document.deletefrm.submit();">삭제</button>
 					<form name="deletefrm" action="delete.do" method="post">
 						<input type="hidden" name="post_no" value="${vo.post_no }">

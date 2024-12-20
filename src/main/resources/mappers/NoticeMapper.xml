@@ -8,10 +8,10 @@
 		 WHERE p.USER_ID = u.USER_ID
 		   AND p.POST_STATE != '0'
 		   AND p.POST_TYPE != '0'
-		 <if test="search_type != null and search_type.equals('POST_TITLE')">
+		 <if test="search_type != null and search_type.equals('post_title')">
 		   AND p.POST_TITLE like concat('%',#{search_value},'%')
 		 </if>
-		 <if test="search_type != null and search_type.equals('USER_ID')">
+		 <if test="search_type != null and search_type.equals('user_id')">
 		   AND u.USER_ID like concat('%',#{search_value},'%')
 		 </if>
 		 limit #{start},#{perPage}
@@ -22,10 +22,10 @@
 		  FROM POST p, USER u
 		 WHERE p.USER_ID = u.USER_ID
 		   AND p.POST_STATE != '0'
-		 <if test="search_type != null and search_type.equals('POST_TITLE')">
+		 <if test="search_type != null and search_type.equals('post_title')">
 		   AND p.POST_TITLE like concat('%',#{search_value},'%')
 		 </if>
-		 <if test="search_type != null and search_type.equals('USER_ID')">
+		 <if test="search_type != null and search_type.equals('user_id')">
 		   AND u.USER_ID like concat('%',#{search_value},'%')
 		 </if>
 		 
@@ -33,16 +33,18 @@
 	
 	<insert id="insert" parameterType="noticeVO">
 		INSERT INTO POST(
-			 POST_NO
+			 USER_ID
 			,POST_TITLE
 			,POST_CONTENT
+			,POST_TYPE
 		)VALUES(
-			 #{USER_ID}
-			,#{POST_TITLE}
-			,#{POST_CONTENT}
+			 #{user_id}
+			,#{post_title}
+			,#{post_content}
+			,'1'
 		)
 		
-		<selectKey order="AFTER" resultType="int" keyProperty="nno">
+		<selectKey order="AFTER" resultType="int" keyProperty="post_no">
 			SELECT MAX(POST_NO) FROM POST
 		</selectKey>
 	</insert>
@@ -53,6 +55,15 @@
 		 WHERE p.USER_ID = u.USER_ID
 		   AND p.POST_NO =#{POST_NO}
 	</select>
+	
+	<!-- 공지사항 수정 쿼리문 -->
+    <update id="updateNotice" parameterType="noticeVO">
+        UPDATE POST
+        SET POST_TITLE = #{post_title},
+            POST_CONTENT = #{post_content},
+            POST_DATE = NOW()
+        WHERE POST_NO = #{post_no}
+    </update>
 	
 	<update id="changeState" parameterType="int">
 		UPDATE POST

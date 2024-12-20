@@ -45,5 +45,9 @@ public class NoticeServiceImpl implements NoticeService {
 		return noticeDAO.selectCntFreeByUid(user_id);
 	}
 	
-	
+	@Override
+	public int updateNotice(NoticeVO vo) {
+		return noticeDAO.updateNotice(vo);
+	}
+
 }
