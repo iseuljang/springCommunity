@@ -125,6 +125,35 @@
 		width: 120px;
 		text-align: center;
 	}
+	
+	.pagination {
+	    text-align: center;
+	}
+	
+	.pagination a {
+	    text-decoration: none;
+	    color: #222222;
+	    font-size: 16px;
+	    padding: 8px 15px;
+	    margin: 0 5px;
+	    border: 1px solid #E2E2E2;
+	    border-radius: 5px;
+	    transition: all 0.3s;
+	}
+	
+	.pagination a.active {
+	    background: #E2E2E2;
+	    color: white;
+	}
+	
+	.pagination a:hover {
+	    background: #E2E2E2;
+	    /* color: white; */
+	}
+	
+	#default:hover{
+		background: white;
+	}
   </style>
   <script>
   function updateUser(user_id,obj){
@@ -464,7 +493,7 @@
 								</c:forEach>
 							</table>
 							<!-- 페이징 영역 -->
-							<div style="text-align: center;">
+							<div style="text-align: center; margin-top:30px;" class="pagination">
 								<!-- 이전페이지로 이동 -->
 								<c:if test="${paging.startPage > 1 }">
 									<a href="list.do?nowPage=${paging.startPage-1}
@@ -481,7 +510,7 @@
 								<!-- 페이지번호 -->
 								<c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="cnt">
 									<c:if test="${paging.nowPage eq cnt}">
-										<b style="color:#FF5722;">${cnt}</b>
+										<a id="default" style="color:#FF5722; cursor:default;">${cnt}</a>
 									</c:if>
 									<c:if test="${paging.nowPage ne cnt}">
 										<a href="list.do?nowPage=${cnt}

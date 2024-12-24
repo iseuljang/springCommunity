@@ -39,4 +39,16 @@ public class AdminDAO {
 	public UserInfoVO selectById(String user_id) {
 		return sqlSession.selectOne(name_space+"selectById",user_id);
 	}
+	
+	public int insertEmail(EmailVO vo) {
+		return sqlSession.insert(name_space+"insertEmail",vo);
+	}
+	
+	public List<EmailVO> selectEmails() {
+		return sqlSession.selectList(name_space+"selectEmails");
+	}
+	
+	public int updateEmailState(EmailVO vo) {
+		return sqlSession.update(name_space+"updateEmailState",vo);
+	}
 }

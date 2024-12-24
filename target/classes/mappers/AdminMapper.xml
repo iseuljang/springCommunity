@@ -106,4 +106,21 @@
 	    FROM USER 
 	    WHERE USER_ID = #{user_id}
 	</select>
+	
+	<insert id="insertEmail" parameterType="emailVO">
+	    INSERT INTO EMAIL (EMAIL_TO, EMAIL_TITLE, EMAIL_CONTENT, EMAIL_STATE)
+	    VALUES (#{email_to}, #{email_title}, #{email_content}, 0)
+	</insert>
+	
+	
+	<select id="selectEmails" resultType="emailVO">
+	    SELECT * FROM EMAIL WHERE EMAIL_STATE = 0 
+	</select>
+	
+	<update id="updateEmailState">
+	    UPDATE EMAIL
+	    SET EMAIL_SEND_DATE = NOW(),
+	        EMAIL_STATE = #{email_state} 
+	    WHERE EMAIL_NO = #{email_no}
+	</update>
 </mapper>

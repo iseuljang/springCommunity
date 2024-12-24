@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.springCommunity.dao.AdminDAO;
+import com.springCommunity.vo.EmailVO;
 import com.springCommunity.vo.SearchVO;
 import com.springCommunity.vo.UserInfoVO;
 
@@ -40,4 +41,18 @@ public class AdminServiceImpl implements AdminService {
 		return adminDAO.selectById(user_id);
 	}
 
+	@Override
+	public int insertEmail(EmailVO vo) {
+		return adminDAO.insertEmail(vo);
+	}
+
+	@Override
+	public List<EmailVO> selectEmails() {
+		return adminDAO.selectEmails();
+	}
+
+	@Override
+	public int updateEmailState(EmailVO vo) {
+		return adminDAO.updateEmailState(vo);
+	}
 }

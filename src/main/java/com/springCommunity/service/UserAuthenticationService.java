@@ -24,9 +24,12 @@ public class UserAuthenticationService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		
+		
 		//String username == 사용자 아이디
 		Map<String,Object> user
 			= sqlSession.selectOne("com.springCommunity.mapper.userMapper.selectOneById", username);
+		
 		
 		System.out.println("Map userid : "+ (String)user.get("USER_ID"));
 		

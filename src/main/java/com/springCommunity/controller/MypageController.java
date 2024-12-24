@@ -46,9 +46,8 @@ public class MypageController {
 		return "mypage/info";
 	}
 	
-	@ResponseBody
 	@RequestMapping(value="/mypage/info.do", method = RequestMethod.POST)
-	public String info(MypageVO mypageVO,Principal principal) {
+	public String info(MypageVO mypageVO,Principal principal,HttpServletRequest request,HttpServletResponse response) throws IOException {
 		
 		String userId = principal.getName();
 		mypageVO.setUser_id(userId);
@@ -57,12 +56,24 @@ public class MypageController {
 			
 		if(rs>0) {
 			System.out.println("회원정보 수정 성공.");
-			return "redirect:/";
+			response.setCharacterEncoding("UTF-8");
+			response.setContentType("text/html;charset=UTF-8");
+			response.getWriter().append("<script>alert('회원정보 수정에 성공했습니다.');"
+										+"location.href='"
+										+request.getContextPath()
+										+"/mypage/info.do'</script>").flush();
 			
 		}else {
 			System.out.println("회원정보 수정 실패.");
-			return "redirect:info.do";
+			response.setCharacterEncoding("UTF-8");
+			response.setContentType("text/html;charset=UTF-8");
+			response.getWriter().append("<script>alert('회원정보 수정 실패했습니다. 다시확인해주세요');"
+										+"location.href='"
+										+request.getContextPath()
+										+"/mypage/info.do'</script>").flush();
+			
 		}
+		return "redirect:info.do";
 	}
 		
 	@ResponseBody
@@ -172,7 +183,6 @@ public class MypageController {
 			return vo;
 			
 		}else {
-
 		}
 		return null;
 	}

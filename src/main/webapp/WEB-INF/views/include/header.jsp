@@ -599,9 +599,9 @@ function connectWebSocket(chat_no) {
     // 채팅방 번호에 따라 WebSocket을 생성
     if(!chatWebSockets[chat_no]) {
     	/* 시연용 */
-        const socket = new WebSocket("ws://192.168.0.175:8080/community/chat"); 
+        //const socket = new WebSocket("ws://192.168.0.175:8080/community/chat"); 
         //각자 컴퓨터에서 돌릴용
-        //const socket = new WebSocket("ws://localhost:8080/community/chat"); 
+        const socket = new WebSocket("ws://localhost:8080/community/chat"); 
 
         socket.onopen = function () {
             console.log(`WebSocket 연결 성공: 채팅방 \${chat_no}`);
@@ -699,8 +699,8 @@ function sendMessage(chat_no) {
         $.ajax({
             url: '<%= request.getContextPath() %>/chat/sendMessage.do',
             method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ chat_no, user_id, chat_message_content }),
+            //contentType: 'application/json',
+            data: { chat_no : chat_no, user_id : user_id, chat_message_content : chat_message_content },
             success: function() {
                 console.log('메시지가 저장되었습니다.');
             },
@@ -842,11 +842,11 @@ function saveChatName(chat_no, newName, inputElement) {
             chat_users_name: newName,
             user_id: user_id
         },
-        success: function(result) {
-        	if(result.trim() === "Success"){
+        success: function(data) {
+        	if(data.result === "Success"){
 	            // 성공적으로 저장된 경우 이름 업데이트
 	            const updatedElement = $(`<h2 id="chatName_\${chat_no}" onclick="modifyChatName(\${chat_no})"></h2>`)
-	                .text(newName);
+	                .text(data.vo.chat_users_name);
 	            inputElement.replaceWith(updatedElement);
         	}else {
                 alert("저장 실패: 다시 시도해주세요.");
@@ -1035,6 +1035,86 @@ function showUnreadCount(totalUnread) {
     }
 }
 </script>
+<script>
+function checkIn() {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+
+                // AJAX 요청
+                $.ajax({
+                    url: "user/checkIn.do",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        latitude: latitude,         // 위도
+                        longitude: longitude,       // 경도
+                        user_id: user_id  // 사용자 ID (VO의 필드와 동일해야함)
+                    }),
+                    success: function (data) {
+                    	console.log(data);
+                        alert('출근 완료!');
+                    },
+                    error: function (xhr, status, error) {
+                        alert('출근 실패! 이미 존재하는 출근 기록입니다.');
+                       console.log(xhr.responseText);
+                    }
+                });
+            },
+            (error) => {
+                alert(`위치 정보를 가져올 수 없습니다: ${error.message}`);
+            },
+            {
+                enableHighAccuracy: true, // 정확도 우선 모드
+                timeout: 10000,           // 10초 이내 응답 없으면 에러 발생
+                maximumAge: 0             // 항상 최신 위치 정보 수집
+            }
+        );
+    } else {
+        alert("브라우저가 위치 서비스를 지원하지 않습니다.");
+    }
+}
+// 퇴근 함수 
+function checkOut() {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+
+                // AJAX 요청
+                $.ajax({
+                    url: "user/checkOut.do",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        latitude: latitude,         // 위도
+                        longitude: longitude,       // 경도
+                        user_id: user_id  // 사용자 ID (VO의 필드와 동일해야함)
+                    }),
+                    success: function (data) {
+                        alert('퇴근 완료! ');
+                    },
+                    error: function (xhr, status, error) {
+                        alert('퇴근 처리가 되지 않았습니다.');
+                       console.log(xhr.responseText);
+                    }
+                });
+            },
+            (error) => {
+                alert(`위치 정보를 가져올 수 없습니다: ${error.message}`);
+            },
+            {
+                enableHighAccuracy: true, // 정확도 우선 모드
+                timeout: 10000,           // 10초 이내 응답 없으면 에러 발생
+                maximumAge: 0             // 항상 최신 위치 정보 수집
+            }
+        );
+    } else {
+        alert("브라우저가 위치 서비스를 지원하지 않습니다.");
+    }
+}
+</script>
 </head>
 <body>
 	<!-- 로그인 X -->
@@ -1095,6 +1175,8 @@ function showUnreadCount(totalUnread) {
 			<div id="bar">
 				<div id="working_info_bar">
 					<div id="working_info">근태정보</div><br>
+					<button onclick="checkIn()">출근 </button> &nbsp;&nbsp;&nbsp;&nbsp;
+					<button onclick="checkOut()">퇴근</button>
 					<div id="working_info">2024-12-05 11:51</div><br>
 					<div id="working_info">출근시각 : </div><br>
 					<div id="working_info">퇴근시각 : </div>
@@ -1130,9 +1212,9 @@ function showUnreadCount(totalUnread) {
 		
 		<table class="mainTable" style="font-size:18px; text-decoration: none; color:black; font-weight: bold;">
 	        <tr>
-	            <th class="existValue"><a href="<%=request.getContextPath() %>/notice/list.do">공지사항</a></th>
+	            <th class="existValue"><a href="<%=request.getContextPath() %>/post/list.do?post_type=1">공지사항</a></th>
 	            <th>|</th>
-	            <th class="existValue"><a href="<%=request.getContextPath() %>/board/list.do">사내 커뮤니티</a></th>
+	            <th class="existValue"><a href="<%=request.getContextPath() %>/post/list.do?post_type=0">사내 커뮤니티</a></th>
 	            <th>|</th>
 	            <th class="existValue"><a href="user/myDepartment.do">나의 부서 업무 상황</a></th>
 	        </tr>

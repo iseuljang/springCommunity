@@ -17,13 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.springCommunity.service.AdminService;
-import com.springCommunity.service.ExcelUserService;
-import com.springCommunity.service.NaverEmailService;
-import com.springCommunity.service.UserService;
+import com.springCommunity.service.*;
 import com.springCommunity.util.PagingUtil;
-import com.springCommunity.vo.SearchVO;
-import com.springCommunity.vo.UserInfoVO;
+import com.springCommunity.vo.*;
 
 @RequestMapping("/admin")
 @Controller
@@ -51,39 +47,52 @@ public class AdminController {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("파일이 비어 있습니다.");
         }
-        
+        int successCount = 0;
+        int emailRequestCount = 0;
         try(InputStream inputStream = file.getInputStream()) {
             List<UserInfoVO> users = excelUserService.readUsersFromExcel(inputStream);
 
-            // 비밀번호 암호화
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            for(UserInfoVO user : users) {
-            	user.setBefore_password(user.getUser_password());
-                user.setUser_password(encryptPassword(user.getUser_password()));
-            }
+            for (UserInfoVO userInfoVO : users) {
+                // 랜덤 비밀번호 생성 및 암호화
+                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+                String randomPassword = generateRandom(6);
+                userInfoVO.setUser_password(randomPassword); // 암호화 전 비밀번호 저장
+                userInfoVO.setUser_password(encoder.encode(randomPassword));
+                userInfoVO.setUser_id("jj" + userInfoVO.getUser_id());
 
-            // MyBatis 매퍼 호출
-            int result = adminService.insertUsers(users);
-            
-            if(result > 0) {
-                model.addAttribute("Message", "사용자 정보가 성공적으로 업로드되었습니다.");
-                // 이메일 발송 및 실패 처리
-                List<String> failedEmails = sendEmailToUsers(users);
-                if(!failedEmails.isEmpty()) {
-                    model.addAttribute("MessageE", "이메일 발송 실패: " + String.join(", ", failedEmails));
-                }else {
-                	model.addAttribute("MessageE", "회원정보가 이메일로 성공적으로 발송되었습니다.");
+                // 사용자 정보 등록
+                int result = userService.insertUser(userInfoVO);
+                if (result > 0) {
+                    successCount++;
+
+                    // 이메일 발송 요청 저장
+                    EmailVO email = new EmailVO();
+                    email.setEmail_to(userInfoVO.getUser_email());
+                    email.setEmail_title("회원 가입 정보");
+                    email.setEmail_content(
+                        "안녕하세요, " + userInfoVO.getUser_name() + "님!\n\n" +
+                        "귀하의 회원 가입이 완료되었습니다.\n" +
+                        "회원 ID: " + userInfoVO.getUser_id() + "\n" +
+                        "임시 비밀번호: " + randomPassword + "\n\n" +
+                        "로그인 후 비밀번호를 변경하시기 바랍니다."
+                    );
+
+                    int emailResult = adminService.insertEmail(email);
+                    if (emailResult > 0) {
+                        emailRequestCount++;
+                    }
                 }
-            }else {
-                model.addAttribute("Message", "파일 처리 중 오류가 발생했습니다.");
             }
-            
-            return "admin/upload_users";
+            // 결과 메시지 설정
+            model.addAttribute("Message", 
+                "총 " + users.size() + "명 중 " + successCount + "명이 성공적으로 등록되었습니다.");
+            model.addAttribute("MessageE", 
+                "이메일 발송 요청: " + emailRequestCount + "건 저장되었습니다.");
         }catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("Message", "파일 처리 중 오류가 발생했습니다.");
-            return "admin/upload_users";
         }
+        return "admin/upload_users";
     }
     
     @RequestMapping(value="/insert_user.do", method = RequestMethod.POST)
@@ -106,21 +115,22 @@ public class AdminController {
             System.out.println("회원등록성공");
             model.addAttribute("iMessage", "사용자 정보가 성공적으로 등록되었습니다.");
             // 이메일 발송 내용 설정
-            String subject = "회원 가입 정보";
-            String emailContent = "안녕하세요, " + userInfoVO.getUser_name() + "님!\n\n" +
-                                  "귀하의 회원 가입이 완료되었습니다.\n" +
-                                  "회원 ID: " + userInfoVO.getUser_id() + "\n" +
-                                  "임시 비밀번호: " + random_PASSWORD + "\n\n" +
-                                  "로그인 후 비밀번호를 변경하시기 바랍니다.";
+            EmailVO email = new EmailVO();
+            email.setEmail_to(userInfoVO.getUser_email());
+            email.setEmail_title("회원 가입 정보");
+            email.setEmail_content(
+                "안녕하세요, " + userInfoVO.getUser_name() + "님!\n\n" +
+                "귀하의 회원 가입이 완료되었습니다.\n" +
+                "회원 ID: " + userInfoVO.getUser_id() + "\n" +
+                "임시 비밀번호: " + random_PASSWORD + "\n\n" +
+                "로그인 후 비밀번호를 변경하시기 바랍니다."
+            );
             
-            try {
-            	naverEmailService.sendNaverEmail(userInfoVO.getUser_email(), subject, emailContent);
-                System.out.println("이메일 발송 성공");
-                model.addAttribute("iMessageE", "회원정보가 이메일로 성공적으로 발송되었습니다.");
-            } catch (MailException e) {
-                e.printStackTrace();
-                System.out.println("이메일 발송 실패");
-                model.addAttribute("iMessageE", "이메일 발송에 실패했습니다.");
+            int emailResult = adminService.insertEmail(email);
+            if(emailResult > 0) {
+                model.addAttribute("iMessageE", "이메일 발송 요청이 성공적으로 저장되었습니다.");
+            }else {
+                model.addAttribute("iMessageE", "이메일 발송 요청 저장에 실패했습니다.");
             }
         } else {
             System.out.println("회원등록실패");
@@ -174,29 +184,6 @@ public class AdminController {
 		model.addAttribute("paging", paging);
 		
 		return "admin/list";
-	}
-    
-    private List<String> sendEmailToUsers(List<UserInfoVO> users) {
-	    List<String> failedEmails = new ArrayList<>();
-
-	    for(UserInfoVO user : users) {
-	        String subject = "회원 가입 정보";
-	        String emailContent = "안녕하세요, " + user.getUser_name() + "님!\n\n" +
-	                              "귀하의 회원 가입이 완료되었습니다.\n" +
-	                              "회원 ID: " + user.getUser_id() + "\n" +
-	                              "임시 비밀번호: " + user.getBefore_password() + "\n\n" +
-	                              "로그인 후 비밀번호를 변경하시기 바랍니다.";
-	        try{
-	            naverEmailService.sendNaverEmail(user.getUser_email(), subject, emailContent);
-	            System.out.println("이메일 발송 성공: " + user.getUser_email());
-	        }catch (MailException e) {
-	            e.printStackTrace();
-	            System.out.println("이메일 발송 실패: " + user.getUser_email());
-	            failedEmails.add(user.getUser_email()); // 실패한 이메일 추가
-	        }
-	    }
-
-	    return failedEmails;
 	}
     
     @ResponseBody
