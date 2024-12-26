@@ -54,7 +54,8 @@
 🖥담당한 기능
 -
   - **ERD**
-  ![image](https://github.com/user-attachments/assets/60eedb76-2fca-4855-940d-1f5528a52664)
+  ![ERD](https://github.com/user-attachments/assets/89828d22-43af-4332-aa45-ef27618879c6)
+  ![ERD(EMAIL)](https://github.com/user-attachments/assets/f5b2e796-d070-449a-bec8-1c6464ea537c)
 
   - **로그인&로그아웃**
     - 스프링 시큐리티를 사용하여 로그인처리, 로그아웃처리
@@ -62,6 +63,7 @@
     ![loginModal](https://github.com/iseuljang/springCommunity/blob/main/screen/login.jpg)
     - 로그인 실패시 모달창에서 알림
     ![loginFail](https://github.com/iseuljang/springCommunity/blob/main/screen/login%20fail.jpg)
+
   - **관리자 기능**
     - 직원등록
       - 단건인 경우 직접 입력하여 직원을 등록
@@ -74,6 +76,7 @@
       - 조회 조건은 직원 이름, 재직상태, 부서, 직책, 입사일
       - 직원의 재직상태와 부서, 직책을 수정할 수 있음
     <img src="https://github.com/iseuljang/springCommunity/blob/main/screen/%EA%B4%80%EB%A6%AC%EC%9E%90.gif">
+    
   - **채팅방 기능**
     - 채팅방 생성
       - 채팅방 생성 버튼 클릭시 이름, 부서, 직책으로 검색할 수 있는 모달창이 뜸
@@ -108,6 +111,7 @@
       - 채팅방 나감 상태인 직원은 채팅목록에서 제외되며 다시 초대 가능
       - 해당 채팅방의 참가자 전원이 나감 상태인 경우 채팅방 비활성화처리
     <img src="https://github.com/iseuljang/springCommunity/blob/main/screen/%EC%B1%84%ED%8C%85.gif">
+    
   - **게시판 CRUD**
     - 게시글 등록 및 수정시 필터를 사용하여 XXS 방지 및 비속어 처리
     ![image](https://github.com/user-attachments/assets/4880fe3d-f112-4e0b-9d9d-2066091b498e)
@@ -124,11 +128,6 @@
     ![image](https://github.com/user-attachments/assets/c59b38f4-720c-41c3-ac20-c40028528ddc)
     ![image](https://github.com/user-attachments/assets/d7364038-be98-4e78-b733-0575ca7ad2c4)
 
-
-
-
-
-
   
 <br>
 
@@ -144,12 +143,119 @@
     - 
       - 수정전
       ```
+      function chatUserAdd(chat_no,chat_users_name) {
+          // 모달 창 열기
+          $("#addUserModal").fadeIn();
       ```
       - 수정후
       ```
+      function chatUserAdd(chat_no, chat_users_name) {
+          const modalId = "addUserModal_"+chat_no; // 고유한 모달 ID 생성
+      
+          // 이미 모달이 존재하면 열기만 함
+          if($("#"+modalId).length > 0) {
+              $("#"+modalId).fadeIn();
+              return;
+          }
+      
+          // 모달 HTML 동적 생성
+          const modalHTML = `
+              <div id="\${modalId}" class="addUserModalWrapper">
+                  <div class="addUserModal">
+                      <div class="modalHeader">
+                          <h2>참가자 초대</h2>
+                          <button class="closeBtn" onclick="closeAddUserModal('\${modalId}')">X</button>
+                      </div>
+                      <input type="text" id="user_search_add_\${chat_no}" class="user_search_add" placeholder="이름, 부서, 직책으로 검색하세요">
+                      <ul id="addUserList_\${chat_no}" class="addUserList" style="display:none;"></ul>
+                      <button id="addUserButton_\${chat_no}" class="addUserButton">초대</button>
+                  </div>
+              </div>
+          `;
+      
+          // Body에 모달 추가
+          $("body").append(modalHTML);
+      
+          // 모달 스타일링
+          $("#"+modalId).fadeIn();
+          
+          // 외부 클릭으로 모달 닫기
+          $("#"+modalId).on("click", function (event) {
+              if($(event.target).hasClass("addUserModalWrapper")) {
+                  closeAddUserModal(modalId); // 외부 클릭 시 모달 닫기
+              }
+          });
+      
+          // 검색 기능 초기화
+          $(document).on('keyup', `#user_search_add_\${chat_no}`, function () {
+              let search_value = $(this).val();
+              if (search_value.length > 0) {
+                  $.ajax({
+                      url: '<%= request.getContextPath() %>/chat/searchUsers.do',
+                      method: 'GET',
+                      data: { search_value: search_value, chat_no: chat_no },
+                      success: function (data) {
+                          $("#addUserList_"+chat_no).empty();
+                          if(data.length === 0) {
+                              $("#addUserList_"+chat_no).append('<li>검색 결과가 없습니다.</li>');
+                          }else {
+                              $("#addUserList_"+chat_no).show();
+                              data.forEach(function (item) {
+                                  $("#addUserList_"+chat_no).append(
+                                      `<li>
+                                          <input type="checkbox" value="\${item.user_id}:\${item.user_name}">
+                                          \${item.user_name} - \${item.department_name} - \${item.job_position_name}
+                                      </li>`
+                                  );
+                              });
+                          }
+                      },
+                      error: function () {
+                          alert("검색 중 문제가 발생했습니다.");
+                      }
+                  });
+              }
+          });
+      
+          // 사용자 초대 처리
+          $(document).on("click", `#addUserButton_\${chat_no}`, function () {
+              let selectedUsers = [];
+              let chatNames = [];
+              $(`#addUserList_\${chat_no} input[type="checkbox"]:checked`).each(function () {
+                  const value = $(this).val();
+                  selectedUsers.push(value.split(":")[0]);
+                  chatNames.push(value.split(":")[1]);
+              });
+      
+              if (selectedUsers.length > 0) {
+                  chat_users_name += ", " + chatNames.join(', ');
+                  console.log("addUser chat_users_name:", chat_users_name);
+                  $.ajax({
+                      url: '<%= request.getContextPath() %>/chat/addUser.do',
+                      method: 'POST',
+                      contentType: 'application/json; charset=utf-8',
+                      data: JSON.stringify({ chat_no: chat_no, chat_users_name: chat_users_name, users: selectedUsers }),
+                      success: function (result) {
+                          if(result.trim() === "Success") {
+                              closeAddUserModal(modalId);
+                              chatUser(chat_no);
+                              chatName(chat_no);
+                          }else {
+                              alert("사용자 초대에 실패했습니다.");
+                          }
+                      },
+                      error: function () {
+                          alert("서버 오류로 인해 사용자 초대에 실패했습니다.");
+                      }
+                  });
+              } else {
+                  alert("초대할 사용자를 선택해주세요.");
+              }
+          });
+      }
       ``` 
   - 해당 경험을 통해 알게 된 점
-    - &nbsp;
+    - 각 채팅방에 맞게 모달을 동적으로 생성해 사용하니 동시성 문제를 해결할 수 있었고, 유연한 코드 설계의 중요성을 배웠습니다.
 
 2️⃣ 여러창이 있는 경우 웹소켓 연결문제
   - 문제 배경
@@ -160,12 +266,18 @@
     - 
       - 수정전
       ```
+      let socket;      
+      function connectWebSocket() {
       ```
       - 수정후
       ```
+      const chatWebSockets = {}; // 채팅방 WebSocket 저장 객체
+      function connectWebSocket(chat_no) {
+          // 채팅방 번호에 따라 WebSocket을 생성
+          if(!chatWebSockets[chat_no]) {
       ``` 
   - 해당 경험을 통해 알게 된 점
-    - &nbsp;
+    - 여러 창에서 웹소켓을 사용할 때는 각 채팅방의 웹소켓을 기본키로 배열에 저장해 관리하면 연결 문제를 효과적으로 해결할 수 있음을 배웠습니다.
    
 
 3️⃣ 채팅방 검색결과 초기화
@@ -341,7 +453,7 @@
     }
       ``` 
   - 해당 경험을 통해 알게 된 점
-    - &nbsp;
+    - setInterval을 분리해서 메인 채팅방 상태와 검색 상태를 따로 처리한 방식은 코드를 더 이해하기 쉽고 관리하기 좋게 만들어준다는 걸 깨달았다
 
 
 <br>
