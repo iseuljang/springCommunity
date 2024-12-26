@@ -58,17 +58,22 @@
 
   - **로그인&로그아웃**
     - 스프링 시큐리티를 사용하여 로그인처리, 로그아웃처리
+    ![login](https://github.com/iseuljang/springCommunity/blob/main/screen/main(not%20login).jpg)
+    ![loginModal](https://github.com/iseuljang/springCommunity/blob/main/screen/login.jpg)
+    - 로그인 실패시 모달창에서 알림
+    ![loginFail](https://github.com/iseuljang/springCommunity/blob/main/screen/login%20fail.jpg)
   - **관리자 기능**
     - 직원등록
       - 단건인 경우 직접 입력하여 직원을 등록
       - 다건인 경우 지정된 엑셀 양식을 받아 입력하여 업로드시켜 직원등록
+      - 직원이 직접 회원가입하는 기능이 없으며 아이디의 경우 "jj"에 사번을 결합하여 아이디를 생성하고 초기비밀번호는 알파벳소문자와 숫자의 랜덤결합으로 6자리 생성
       - 등록된 직원의 이메일로 직원 아이디와 초기비밀번호를 발송(<strong>스케쥴러</strong>)
-        - 직원이 직접 회원가입하는 기능이 없으며 아이디의 경우 "jj"에 사번을 결합하여 아이디를 생성하고 초기비밀번호는 알파벳소문자와 숫자의 랜덤결합으로 6자리 생성
+      
     - 직원목록 조회 및 정보수정
       - 등록되어있는 직원 목록을 조회
-        - 조회 조건은 직원 이름, 재직상태, 부서, 직책, 입사일
+      - 조회 조건은 직원 이름, 재직상태, 부서, 직책, 입사일
       - 직원의 재직상태와 부서, 직책을 수정할 수 있음
-    - <img src="https://github.com/iseuljang/springCommunity/blob/main/screen/%EA%B4%80%EB%A6%AC%EC%9E%90.gif">
+    <img src="https://github.com/iseuljang/springCommunity/blob/main/screen/%EA%B4%80%EB%A6%AC%EC%9E%90.gif">
   - **채팅방 기능**
     - 채팅방 생성
       - 채팅방 생성 버튼 클릭시 이름, 부서, 직책으로 검색할 수 있는 모달창이 뜸
@@ -102,7 +107,7 @@
       - 채팅방에서 나가기를 누를 경우 나감 상태로 변경되며 채팅방 안에서는 나갔음을 메시지로 표시
       - 채팅방 나감 상태인 직원은 채팅목록에서 제외되며 다시 초대 가능
       - 해당 채팅방의 참가자 전원이 나감 상태인 경우 채팅방 비활성화처리
-    - <img src="https://github.com/iseuljang/springCommunity/blob/main/screen/%EC%B1%84%ED%8C%85.gif">
+    <img src="https://github.com/iseuljang/springCommunity/blob/main/screen/%EC%B1%84%ED%8C%85.gif">
   - **게시판 CRUD**
     - 게시글 등록 및 수정시 필터를 사용하여 XXS 방지 및 비속어 처리
     ![image](https://github.com/user-attachments/assets/4880fe3d-f112-4e0b-9d9d-2066091b498e)
