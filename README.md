@@ -62,7 +62,7 @@
     - 직원등록
       - 단건인 경우 직접 입력하여 직원을 등록
       - 다건인 경우 지정된 엑셀 양식을 받아 입력하여 업로드시켜 직원등록
-      - 등록된 직원의 이메일로 직원 아이디와 초기비밀번호를 발송
+      - 등록된 직원의 이메일로 직원 아이디와 초기비밀번호를 발송(<strong>스케쥴러</strong>)
         - 직원이 직접 회원가입하는 기능이 없으며 아이디의 경우 "jj"에 사번을 결합하여 아이디를 생성하고 초기비밀번호는 알파벳소문자와 숫자의 랜덤결합으로 6자리 생성
     - 직원목록 조회 및 정보수정
       - 등록되어있는 직원 목록을 조회
@@ -81,13 +81,15 @@
       - 채팅 내용입력시 그날의 날짜가 없는 경우 날짜 표시. 해당 날짜에 메시지가 있는 경우 메시지만 추가됨
       - 해당 메시지를 읽지 않은 사람의 수 표시
       - 여러 채팅방을 열어놓은 채로 번갈아 가며 채팅입력 가능
-      - 필터를 사용하여 XXS 방지 및 비속어 처리(웹소켓을 사용하여 입력하기 때문에 처음 입력시는 반영되지만 이후 필터동작하여 처리됨)
+      - 필터를 사용하여 XXS 방지 및 비속어 처리(웹소켓을 사용하여 입력하기 때문에 처음 입력시는 반영되지만 이후 필터동작하여 처리됨)(<strong>필터</strong>)
     - 채팅방 상단고정
       - 즐겨찾는 채팅방등을 상단고정 처리하여 항상 맨위에 조회되게 할 수 있음
     - 채팅방 목록
       - 채팅 조회시 해당 채팅방에서 마지막으로 입력된 메시지와 시간이 표시
       - 안읽은 메시지가 있는 경우 안읽은 메시지 갯수 표시
       - 인터벌을 사용하여 최근 채팅 입력된 채팅방이 목록의 상단으로 올라옴
+      - 채팅 참가인원이 3명 이상일 경우 참가자 수 표시
+      - 채팅방 이름으로 채팅 검색
     - 메인
       - 전체 채팅방 안에서 읽지 않은 총 메시지 갯수가 메인에 표시
       - 안읽은 메시지 갯수가 9를 넘어가면 9+, 99를 넘어가면 99+로 표시
@@ -99,10 +101,30 @@
     - 채팅방 나가기
       - 채팅방에서 나가기를 누를 경우 나감 상태로 변경되며 채팅방 안에서는 나갔음을 메시지로 표시
       - 채팅방 나감 상태인 직원은 채팅목록에서 제외되며 다시 초대 가능
+      - 해당 채팅방의 참가자 전원이 나감 상태인 경우 채팅방 비활성화처리
     - <img src="https://github.com/iseuljang/springCommunity/blob/main/screen/%EC%B1%84%ED%8C%85.gif">
+  - **게시판 CRUD**
+    - 게시글 등록 및 수정시 필터를 사용하여 XXS 방지 및 비속어 처리
+    ![image](https://github.com/user-attachments/assets/4880fe3d-f112-4e0b-9d9d-2066091b498e)
+    ![image](https://github.com/user-attachments/assets/95314afb-1a0d-4fda-a17e-2cbb2ac905bf)
+    ![image](https://github.com/user-attachments/assets/16335073-0d59-4dba-afaf-f4ddadcf3efd)
+    ![image](https://github.com/user-attachments/assets/d80af95c-1a20-4b75-a348-e3967a4916df)
+    ![image](https://github.com/user-attachments/assets/6f5d61bc-230c-4794-a00a-ea26cbeab988)
+
+
+  - **댓글 CRUD**
+    - 댓글 등록 및 수정시 필터를 사용하여 XXS 방지 및 비속어 처리
+    ![image](https://github.com/user-attachments/assets/03ff6aa3-6324-425b-b16e-7a8f85f69249)
+    ![image](https://github.com/user-attachments/assets/c80cdab9-9d7e-4789-881b-add82133dd73)
+    ![image](https://github.com/user-attachments/assets/c59b38f4-720c-41c3-ac20-c40028528ddc)
+    ![image](https://github.com/user-attachments/assets/d7364038-be98-4e78-b733-0575ca7ad2c4)
 
 
 
+
+
+
+  
 <br>
 
 💡트러블 슈팅
