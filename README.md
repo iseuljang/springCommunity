@@ -57,6 +57,10 @@
   ![ERD](https://github.com/user-attachments/assets/89828d22-43af-4332-aa45-ef27618879c6)
   ![ERD(EMAIL)](https://github.com/user-attachments/assets/f5b2e796-d070-449a-bec8-1c6464ea537c)
 
+  - **시퀀스(로그인)**
+  ![시퀀스(로그인)](https://github.com/user-attachments/assets/3b47dbd4-28b3-4e22-b30d-8e7e44320e78)
+
+
   - **일정관리(노션)**
     - &nbsp;
 
