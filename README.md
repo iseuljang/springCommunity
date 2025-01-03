@@ -62,7 +62,10 @@
 
 
   - **일정관리(노션)**
-    - &nbsp;
+    ![image](https://github.com/user-attachments/assets/987ba497-a95e-4086-bc5d-a5892d3bedf3)
+    ![image](https://github.com/user-attachments/assets/1820f4ec-eee4-423e-9875-6ff037d8d067)
+
+
 
   - **로그인&로그아웃**
     - 스프링 시큐리티를 사용하여 로그인처리, 로그아웃처리
