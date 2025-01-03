@@ -54,7 +54,7 @@
 🖥담당한 기능
 -
   - **ERD**
-  ![image](https://github.com/user-attachments/assets/44ea2890-5707-4f9f-a8b5-0afdcf547d3d)
+  ![ERD](https://github.com/user-attachments/assets/8c678edd-bfac-41f2-a060-332e73c721b0)
   ![image](https://github.com/user-attachments/assets/e7c40f24-6cf8-4dc1-8868-44950389065e)
 
 
