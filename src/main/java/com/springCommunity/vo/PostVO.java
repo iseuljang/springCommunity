@@ -9,7 +9,7 @@ public class PostVO extends UserInfoVO {
 	private String post_state;
 	private String post_type;
 	private int no; // 게시물 번호
-	
+	private int comment_count; // 댓글 갯수
 	
 	public int getPost_no()         { return post_no;     }
 	public String getUser_id()      { return user_id;     }
@@ -19,6 +19,7 @@ public class PostVO extends UserInfoVO {
 	public String getPost_state()   { return post_state;  }
 	public String getPost_type()    { return post_type;   }
 	public int getNo()              { return no;          }
+	public int getComment_count()   { return comment_count;}	
 	
 	public void setPost_no(int post_no)              { this.post_no = post_no;          }
 	public void setUser_id(String user_id)           { this.user_id = user_id;          }
@@ -28,4 +29,5 @@ public class PostVO extends UserInfoVO {
 	public void setPost_state(String post_state)     { this.post_state = post_state;    }
 	public void setPost_type(String post_type)       { this.post_type = post_type;      }
 	public void setNo(int no)                        { this.no = no;                    }
+	public void setComment_count(int comment_count)  { this.comment_count = comment_count;}
 }

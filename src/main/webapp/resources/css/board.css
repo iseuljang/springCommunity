@@ -111,6 +111,7 @@
 
 .pagination {
     text-align: center;
+    margin-top: 40px;
 }
 
 .pagination a {
@@ -207,7 +208,7 @@
     justify-content: flex-end;
 }
 
-.edit-button, .delete-button {
+.edit-button, .delete-button, .write_btn {
     background-color: #b0b0b0;
     color: #fff;
     border: none;
@@ -425,3 +426,16 @@
 .menu-container:hover{
 	background-color:#E2E2E2;
 }
+
+input[type="text"],textarea {
+	outline:none;
+	height: 30px;
+	/* border: 1px solid #EEEEEE; */
+	border-radius: 5px;
+	border:none;
+	width: 100%;
+	font-size: 18px;
+}
+
+textarea {
+	height: 300px;

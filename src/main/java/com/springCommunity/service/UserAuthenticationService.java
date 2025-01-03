@@ -1,6 +1,7 @@
 package com.springCommunity.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +63,8 @@ public class UserAuthenticationService implements UserDetailsService {
 				,(Integer)user.get("JOB_POSITION_ID")
 				,(Integer)user.get("USER_STATE")
 				);
+
+		
 		
 		return vo;
 	}

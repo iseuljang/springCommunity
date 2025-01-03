@@ -9,7 +9,6 @@
 <link href="<%= request.getContextPath()%>/resources/css/header.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/chat.css" />
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/login.css" />
-<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/board.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <script src="<%= request.getContextPath() %>/resources/js/jquery-3.7.1.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"><!-- jQuery UI CSS -->
@@ -599,9 +598,9 @@ function connectWebSocket(chat_no) {
     // 채팅방 번호에 따라 WebSocket을 생성
     if(!chatWebSockets[chat_no]) {
     	/* 시연용 */
-        //const socket = new WebSocket("ws://192.168.0.175:8080/community/chat"); 
+        const socket = new WebSocket("ws://192.168.0.175:8080/community/chat"); 
         //각자 컴퓨터에서 돌릴용
-        const socket = new WebSocket("ws://localhost:8080/community/chat"); 
+        //const socket = new WebSocket("ws://localhost:8080/community/chat"); 
 
         socket.onopen = function () {
             console.log(`WebSocket 연결 성공: 채팅방 \${chat_no}`);
@@ -1123,7 +1122,7 @@ function checkOut() {
             <img src="<%= request.getContextPath() %>/resources/img/메인.jpg" alt="메인 이미지" 
             style="width: 100%; height: 820px;">
             <div class="log_Info" style="font-size: 18px; text-decoration: none; color: white; font-weight: bold; margin-top: 20px;">
-                <a href="join.do" style="color:white;">회원가입</a> | 
+                <!-- <a href="join.do" style="color:white;">회원가입</a> | --> 
                 <a id="loginBtn" style="color:white;">로그인</a><br>
             </div>
         </div>
@@ -1216,7 +1215,7 @@ function checkOut() {
 	            <th>|</th>
 	            <th class="existValue"><a href="<%=request.getContextPath() %>/post/list.do?post_type=0">사내 커뮤니티</a></th>
 	            <th>|</th>
-	            <th class="existValue"><a href="user/myDepartment.do">나의 부서 업무 상황</a></th>
+	            <th class="existValue"><a href="<%=request.getContextPath() %>/user/myDepartment.do">나의 부서 업무 상황</a></th>
 	        </tr>
 	    </table>
 	</sec:authorize>

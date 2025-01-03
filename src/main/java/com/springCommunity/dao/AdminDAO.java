@@ -24,6 +24,10 @@ public class AdminDAO {
 		return sqlSession.insert(name_space+"insertUsers",users);
 	}
 	
+	public int insertUser(UserInfoVO userInfoVO) {
+		return sqlSession.insert(name_space+"insertUser",userInfoVO);
+	}
+	
 	public List<UserInfoVO> selectAll(SearchVO searchVO){
 		return sqlSession.selectList(name_space+"selectAll",searchVO);
 	}

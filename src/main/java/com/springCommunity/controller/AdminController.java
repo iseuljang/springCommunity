@@ -26,9 +26,6 @@ import com.springCommunity.vo.*;
 public class AdminController {
 
     @Autowired
-	UserService userService;
-    
-    @Autowired
 	AdminService adminService;
 	
 	@Autowired
@@ -58,10 +55,9 @@ public class AdminController {
                 String randomPassword = generateRandom(6);
                 userInfoVO.setUser_password(randomPassword); // 암호화 전 비밀번호 저장
                 userInfoVO.setUser_password(encoder.encode(randomPassword));
-                userInfoVO.setUser_id("jj" + userInfoVO.getUser_id());
 
                 // 사용자 정보 등록
-                int result = userService.insertUser(userInfoVO);
+                int result = adminService.insertUser(userInfoVO);
                 if (result > 0) {
                     successCount++;
 
@@ -108,7 +104,7 @@ public class AdminController {
         
         userInfoVO.setUser_id("jj" + userInfoVO.getUser_id());
         
-        int result = userService.insertUser(userInfoVO);
+        int result = adminService.insertUser(userInfoVO);
         
         // 회원 등록 성공 시 이메일 발송
         if(result > 0) {

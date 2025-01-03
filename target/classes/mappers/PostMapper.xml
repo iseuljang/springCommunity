@@ -5,6 +5,7 @@
 	<select id="selectAll" parameterType="searchVO" resultType="postVO">
 		SELECT POST_TITLE, POST_CONTENT, u.USER_ID ,u.USER_NAME, POST_TYPE, POST_NO,  
 		  DEPARTMENT_NAME, JOB_POSITION_NAME,
+		  (SELECT COUNT(*) FROM COMMENT c WHERE p.POST_NO = c.POST_NO) as comment_count,
 		  DATE_FORMAT(POST_DATE, '%Y.%m.%d %H:%i') AS POST_DATE
 		  FROM POST p, USER u
 		 INNER JOIN DEPARTMENT d ON u.DEPARTMENT_ID = d.DEPARTMENT_ID

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -392,7 +393,9 @@
 												>퇴직</option>
 											</select>
 										</td>
-										<td>${userList.user_id}</td>
+										<!-- user_id에서 앞의 두 글자를 제외한 부분 출력 -->
+										<!-- fn:substring(문자열, 시작인덱스, 끝인덱스) -->
+         							    <td>${fn:substring(userList.user_id, 2, fn:length(userList.user_id))}</td>
 										<td>${userList.user_name}</td>
 										<td>${userList.user_join_date}</td>
 										<td>

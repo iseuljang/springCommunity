@@ -9,6 +9,7 @@ import com.springCommunity.vo.*;
 public interface AdminService {
 	
 	public int insertUsers(List<UserInfoVO> users);
+	public int insertUser(UserInfoVO userInfoVO);
 	public List<UserInfoVO> selectAll(SearchVO searchVO);
 	public int selectCount(SearchVO searchVO);
 	public int updateUser(UserInfoVO vo);

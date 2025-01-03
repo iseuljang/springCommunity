@@ -20,6 +20,11 @@ public class AdminServiceImpl implements AdminService {
 	public int insertUsers(List<UserInfoVO> users) {
 		return adminDAO.insertUsers(users);
 	}
+	
+	@Override
+	public int insertUser(UserInfoVO userInfoVO) {
+		return adminDAO.insertUser(userInfoVO);
+	}
 
 	@Override
 	public List<UserInfoVO> selectAll(SearchVO searchVO) {

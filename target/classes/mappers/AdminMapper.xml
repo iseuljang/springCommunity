@@ -34,6 +34,35 @@
 	    </foreach>
 	</insert>
 	
+	<insert id="insertUser" parameterType="userInfoVO">
+		INSERT INTO USER (
+			  USER_ID
+			, USER_PASSWORD
+			, USER_NAME
+			, USER_EMAIL
+			, USER_PHONE
+			, DEPARTMENT_ID
+			, JOB_POSITION_ID
+			, USER_JOIN_DATE
+			, BANK_ID
+			, USER_ACCOUNT
+			, USER_ADDRESS
+			) 
+			VALUES (
+			 #{user_id}
+			,#{user_password}
+			,#{user_name}
+			,#{user_email}
+			,#{user_phone}
+			,#{department_id}
+			,#{job_position_id}
+			,#{user_join_date}
+			,#{bank_id}
+			,#{user_account}
+			,#{user_address}
+			);
+	</insert>
+	
 	<select id="selectAll" parameterType="searchVO" resultType="userInfoVO">
 	    SELECT USER_NAME, USER_ID, DEPARTMENT_ID, JOB_POSITION_ID, USER_PHONE, USER_STATE,
 	    DATE_FORMAT(USER_JOIN_DATE, '%Y.%m.%d') AS USER_JOIN_DATE

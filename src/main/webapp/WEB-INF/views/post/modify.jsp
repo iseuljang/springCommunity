@@ -1,6 +1,30 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="../include/header.jsp" %>
+<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/board.css" />
+<script>
+$(document).ready(function(){
+	$("#post_title").focus();
+	
+	// 폼 제출 방지 및 유효성 검사
+    $("form").on("submit", function(event) {
+        const title = $("#post_title").val().trim(); 
+        const content = $("textarea[name='post_content']").val().trim(); 
+
+        if(title === "") {
+            alert("글 제목을 입력해주세요.");
+            $("#post_title").focus();
+            return false; 
+        }
+
+        if(content === "") {
+            alert("글 내용을 입력해주세요.");
+            $("textarea[name='post_content']").focus();
+            return false; 
+        }
+    });
+});
+</script>
 	<section>
 		<div class="write-container">
 			<div class="write-view">
@@ -16,7 +40,7 @@
 					<table class="write-table">
 						<tr>
 							<th>글제목</th>
-							<td><input type="text" name="post_title" value="${vo.post_title }"></td>
+							<td><input type="text" name="post_title" id="post_title" value="${vo.post_title }"></td>
 						</tr>
 						<tr>
 							<th>내용</th>
@@ -24,8 +48,8 @@
 						</tr>
 					</table>
 					<button class="write-action">수정</button>
+					<button type="button" class="write-action" onclick="location.href='<%=request.getContextPath() %>/post/list.do?post_type=${param.post_type}'">취소</button>
 				</form>
-					<button class="write-action" onclick="location.href='<%=request.getContextPath() %>/post/list.do?post_type=${param.post_type}'">취소</button>
 			</div>
 		</div>
 	</section>

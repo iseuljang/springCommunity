@@ -1,26 +1,39 @@
 package com.springCommunity.service;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.springCommunity.dao.DailyWorkTimeDAO;
 import com.springCommunity.vo.DailyWorkTimeVO;
+import com.springCommunity.vo.WeeklyWorkTimeVO;
 
 @Service
 public class DailyWorkTimeServiceImpl implements DailyWorkTimeService {
 
 	@Autowired
-	DailyWorkTimeDAO dailyWorkTimeDAO;
+	private DailyWorkTimeDAO dailyWorkTimeDAO;
 	//sqlSession >> 쿼리를 실행하는 객체
 	//세션과 해당 쿼리의 값을 가져오기 위해 세션과 정적변수 선언 
 	@Autowired
-	SqlSession sqlSession;
+	private SqlSession sqlSession;
 	public final String namespace = "com.springCommunity.mapper.DailyWorkTimeMapper.";
 	// 회사의 위도와 경도는 Service에서 관리
 	private final double COMPANY_LATITUDE = 35.8402587260868; // 예: 전주 이젠 위도
 	private final double COMPANY_LONGITUDE = 127.132499131298; // 예: 전주 이젠 경도
-	private final double CHECK_IN_DISTANCE_KM = 2.0; // 반경 1km
+	private final double CHECK_IN_DISTANCE_KM = 5.0; // 반경 1km
 
 	// 지구 반지름 
 	private static final double EARTH_RADIUS = 6371.0;
@@ -62,7 +75,7 @@ public class DailyWorkTimeServiceImpl implements DailyWorkTimeService {
 				 // 거리 범위 이내이면 , 퇴근 정보 저장 
 				return true;
 			}else {
-				System.out.println("이미 존재하는 출근 기록입니다.");
+				System.out.println("거리를 벗어났습니다.");
 			}
 		return false; // 거리 범위 밖이면 저장하지 않음
 	}
@@ -89,41 +102,95 @@ public class DailyWorkTimeServiceImpl implements DailyWorkTimeService {
         double distance = EARTH_RADIUS * c;
         return distance;
     }
-    /*
-	  // 구글 거리계산 api 
-	   * private double calculateDistance(double companyLat, double companyLng, double userLat, double userLng) {
-	   String apiKey = "YOUR_GOOGLE_API_KEY"; 
-	   String apiUrl = String.format("https://maps.googleapis.com/maps/api/distancematrix/json?origins=%f,%f&destinations=%f,%f&key=%s",companyLat, companyLng, userLat, userLng, apiKey);
-	  
-	  RestTemplate restTemplate = new RestTemplate(); 
-	  try {
-	   Map<String, Object> response = restTemplate.getForObject(apiUrl, Map.class);
-	   System.out.println("response=============" + response);
-	    
-	   Map<String, Object>row = ((List<Map<String, Object>>) response.get("rows")).get(0);
-	   System.out.println("row=============" + row); 
-	   
-	   Map<String, Object> element =((List<Map<String, Object>>) row.get("elements")).get(0);
-	   System.out.println("element =============" + element );
-	   
-	  	   if ("OK".equals(element.get("status"))) { 
-	  	   	Map<String, Object> distanceObj =(Map<String, Object>) element.get("distance"); 
-	  	   	double distanceInMeters =(double) distanceObj.get("value"); 
-	  	   	
-	  	  // Google API 문서에 따르면 distance.value는정수(Integer)로만 반환 
-	  	  // 애초에 정확한 거리 데이터를 정수로 계산하기 때문에 따라서 정수로 반환되더라도 오류 발생 x 따라서 타입을 Double이 아닌 Integer로 설정해도 데이터 손실은 없다
-	  	    
-		   Integer distanceInMeters =(Integer) distanceObj.get("value"); 
-		   return distanceInMeters / 1000.0; // m to km 정수 / 실수 >> 실수로 결과값 나옴 
-	   		} 
-	   } catch (Exception e) { e.printStackTrace(); }	   
-	  	return Double.MAX_VALUE; // API 호출 실패 시 무한대로 반환 
-	  }
-	 */
+   
 
+    // 해당 유저의 전체 출퇴근 시간을 가져오는 메소드 
 	@Override
-	public void getWorkTime(String userId) {
-		dailyWorkTimeDAO.getWorkTime(userId);
+	public List<DailyWorkTimeVO> selectList (String user_id) {
+
+		return dailyWorkTimeDAO.selectList(user_id);
 	}
+ 
 	
+	@Override
+	public Map<String, Object> calculateWorkTime(String user_id) {
+	    // 1. 해당 유저의 전체 출퇴근 시간을 가져옴
+	    List<DailyWorkTimeVO> list = dailyWorkTimeDAO.selectList(user_id);
+
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	    Map<String, Long> dailyWorkHours = new TreeMap<>(Comparator.reverseOrder()); // 내림차순 정렬
+	    Map<String, Long> weeklyWorkHours = new TreeMap<>(Comparator.reverseOrder()); // 주간 근무 시간
+
+	    // 1) 날짜별 근무시간 계산
+	    list.forEach(workTime -> {
+	        String checkInStr = workTime.getCheck_in_time(); // 출근 시간
+	        String checkOutStr = workTime.getCheck_out_time(); // 퇴근 시간
+
+	        if (checkInStr == null || checkOutStr == null) {
+	            System.out.println("출근 또는 퇴근 시간이 null입니다.");
+	            return; // null 데이터는 건너뜀
+	        }
+
+	        LocalDateTime checkIn = LocalDateTime.parse(checkInStr, formatter);
+	        LocalDateTime checkOut = LocalDateTime.parse(checkOutStr, formatter);
+	        LocalDate localDate = checkIn.toLocalDate();
+ 
+	        // 하루 근무 시간 계산
+	        long dailyMinutes = Duration.between(checkIn, checkOut).toMinutes();
+	        dailyWorkHours.merge(localDate.toString(), dailyMinutes, Long::sum); // TreeMap이므로 자동으로 정렬
+	    });
+
+	    // 2) 주차별 근무시간 합산
+	    dailyWorkHours.keySet().forEach(dateStr -> {
+	        LocalDate date = LocalDate.parse(dateStr);
+	        int weekOfYear = date.get(WeekFields.ISO.weekOfYear());
+	        String weekKey = date.getYear() + "년 " + weekOfYear + "주차";
+
+	        // 해당 날짜의 근무시간 가져오기
+	        long dailyMinutes = dailyWorkHours.getOrDefault(dateStr, 0L);
+
+	        // 주간 데이터에 합산
+	        weeklyWorkHours.merge(weekKey, dailyMinutes, Long::sum);
+	    });
+
+	    // 3) 결과 출력 (디버깅용)
+	    System.out.println("=== 일간 근무시간 (정렬됨) ===");
+	    dailyWorkHours.forEach((date, minutes) -> {
+	        System.out.printf("Date: %s, Work Time: %d minutes\n", date, minutes);
+	    });
+
+	    System.out.println("=== 주간 근무시간 ===");
+	    weeklyWorkHours.forEach((week, minutes) -> {
+	        System.out.printf("Week: %s, Work Time: %d minutes\n", week, minutes);
+	    });
+
+	    // 결과 반환
+	    Map<String, Object> result = new HashMap<>();
+	    result.put("dailyWorkHours", dailyWorkHours); // 일간 근무 시간 (정렬된 TreeMap)
+	    result.put("weeklyWorkHours", weeklyWorkHours); // 주간 근무 시간
+
+	    return result;
+	}
+
+	// 유틸 메서드: 하루 근무시간 계산
+    private long calculateDailyHours(String checkInTime, String checkOutTime) {
+    	// 만약 출근 or 퇴근 시간 둘 중 하나라도 null이면 시간 계산을 할 수 없음 
+    	if (checkInTime == null || checkOutTime == null ) {
+    		System.out.println("둘 중 하나가 null이라서 시간 계산을 할 수 없음 ");
+    		return 0;
+    	}
+    	
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime  start = LocalDateTime .parse(checkInTime, formatter);
+        LocalDateTime  end = LocalDateTime .parse(checkOutTime, formatter);
+        
+        return Duration.between(start, end).toMinutes(); // 시간 단위로 반환 >> 버림처리 
+ 
+        // 따라서 시간 ,분을 이용해서 반환하게끔 설정
+        // 초 단위로는 버림 
+        //시간과 , 분은 버리지 않고 가져오게끔 설정
+    }
+    
+    
+    
 }
