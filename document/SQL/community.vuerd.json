@@ -4,9 +4,9 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -909,
-    "scrollLeft": -463.1221,
-    "zoomLevel": 0.85,
+    "scrollTop": -276.1524,
+    "scrollLeft": -309.0051,
+    "zoomLevel": 0.73,
     "show": 447,
     "database": 4,
     "databaseName": "community",
@@ -254,9 +254,11 @@
         "columnIds": [
           "odA0ODfoPMB58fnqkDJ8F",
           "YKqxw4Qm76EZkpHx4caD4",
+          "L9-IGptS2UIaWul1FH3WL",
           "pvkdzTRhXlufl7Xbe8gCI",
           "Z6Jjo-Mw6SPwCm-GsYQNX",
           "f9-UK_MQKvHs-71ALlQZO",
+          "EMrdB6aUkM1NfrjOwmlmw",
           "_RvTvRCIt_pThIsFyF-Cr",
           "H_7ot_TH0xHTz7Hm5vTcR",
           "vVms1I3wsd6NGJJjLrUaK",
@@ -266,9 +268,11 @@
         "seqColumnIds": [
           "odA0ODfoPMB58fnqkDJ8F",
           "YKqxw4Qm76EZkpHx4caD4",
+          "L9-IGptS2UIaWul1FH3WL",
           "pvkdzTRhXlufl7Xbe8gCI",
           "Z6Jjo-Mw6SPwCm-GsYQNX",
           "f9-UK_MQKvHs-71ALlQZO",
+          "EMrdB6aUkM1NfrjOwmlmw",
           "_RvTvRCIt_pThIsFyF-Cr",
           "H_7ot_TH0xHTz7Hm5vTcR",
           "vVms1I3wsd6NGJJjLrUaK",
@@ -276,15 +280,15 @@
           "8w4MulaaiIUfSN-EoodYS"
         ],
         "ui": {
-          "x": 22.8825,
-          "y": 600.1834,
+          "x": 18.1765,
+          "y": 588.4185,
           "zIndex": 446,
           "widthName": 60,
           "widthComment": 60,
           "color": ""
         },
         "meta": {
-          "updateAt": 1734598025795,
+          "updateAt": 1735871793239,
           "createAt": 1733108305648
         }
       },
@@ -688,15 +692,15 @@
           "X0Jn4GQWuuFLW-LuIC94_"
         ],
         "ui": {
-          "x": 34.0911,
-          "y": 917.6471,
+          "x": 31.3514,
+          "y": 943.6745,
           "zIndex": 1264,
           "widthName": 60,
           "widthComment": 60,
           "color": ""
         },
         "meta": {
-          "updateAt": 1735869804120,
+          "updateAt": 1735871811446,
           "createAt": 1735010446001
         }
       },
@@ -3649,6 +3653,46 @@
           "updateAt": 1735870386036,
           "createAt": 1735870386036
         }
+      },
+      "L9-IGptS2UIaWul1FH3WL": {
+        "id": "L9-IGptS2UIaWul1FH3WL",
+        "tableId": "MdjzTxVkLxpm8qN6cKULO",
+        "name": "VACATION_DAY_TYPE",
+        "comment": "근태반/종일구분(0 선택, 1종일, 2오전,3오후)",
+        "dataType": "TINYINT",
+        "default": "0",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 116,
+          "widthComment": 237,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1735871722237,
+          "createAt": 1735871676492
+        }
+      },
+      "EMrdB6aUkM1NfrjOwmlmw": {
+        "id": "EMrdB6aUkM1NfrjOwmlmw",
+        "tableId": "MdjzTxVkLxpm8qN6cKULO",
+        "name": "VACATION_APPLICATION_DATE",
+        "comment": "근태신청일",
+        "dataType": "TIMESTAMP",
+        "default": "NOW()",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 167,
+          "widthComment": 62,
+          "widthDataType": 65,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1735871783277,
+          "createAt": 1735871677562
+        }
       }
     },
     "relationshipEntities": {
@@ -3811,8 +3855,8 @@
           "columnIds": [
             "8w4MulaaiIUfSN-EoodYS"
           ],
-          "x": 697.8825,
-          "y": 748.1834,
+          "x": 710.1765,
+          "y": 760.4185,
           "direction": 2
         },
         "meta": {
@@ -4838,8 +4882,8 @@
     ],
     "mIcceMck3WuH0NUNBMl2x": [
       "tableColumnEntities",
-      1733108669836,
-      -1,
+      1735871725732,
+      1735871724483,
       {
         "comment": 1733108672142,
         "dataType": 1733108678861,
@@ -6217,6 +6261,30 @@
       1735870386035,
       -1,
       {}
+    ],
+    "L9-IGptS2UIaWul1FH3WL": [
+      "tableColumnEntities",
+      1735871676490,
+      -1,
+      {
+        "name": 1735871694010,
+        "dataType": 1735871699794,
+        "options(notNull)": 1735871702106,
+        "comment": 1735871718542,
+        "default": 1735871722236
+      }
+    ],
+    "EMrdB6aUkM1NfrjOwmlmw": [
+      "tableColumnEntities",
+      1735871677562,
+      -1,
+      {
+        "name": 1735871764388,
+        "dataType": 1735871769523,
+        "options(notNull)": 1735871773451,
+        "default": 1735871775837,
+        "comment": 1735871783276
+      }
     ]
   }
 }
