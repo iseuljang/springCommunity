@@ -60,9 +60,9 @@
 
 
   - **일정관리(노션)**
-    ![image](https://github.com/user-attachments/assets/987ba497-a95e-4086-bc5d-a5892d3bedf3)
-    ![image](https://github.com/user-attachments/assets/1820f4ec-eee4-423e-9875-6ff037d8d067)
-
+    ![노션](https://github.com/user-attachments/assets/65ae2f63-6dd3-4f99-b3ef-9cfd57b02920)
+    ![노션2](https://github.com/user-attachments/assets/df7bd344-95c1-42cd-9663-ae60d590d38e)
+    ![노션3](https://github.com/user-attachments/assets/89d76edb-d46c-4666-8a0e-aec1aa5b9b76)
 
 
   - **로그인&로그아웃**
