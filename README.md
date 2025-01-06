@@ -84,9 +84,15 @@
 
   - **로그인&로그아웃**
     - 스프링 시큐리티를 사용하여 로그인처리, 로그아웃처리
+    - https://github.com/iseuljang/springCommunity/blob/main/src/main/webapp/WEB-INF/spring/security/security-context.xml   
+    - https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/service
+      - UserLoginSuccessHandler.java
+      - UserDeniedHandler.java
+      - UserAuthenticationService.java
     ![login](https://github.com/iseuljang/springCommunity/blob/main/screen/main(not%20login).jpg)
     ![loginModal](https://github.com/iseuljang/springCommunity/blob/main/screen/login.jpg)
     - 로그인 실패시 모달창에서 알림
+      -  https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/service/UserLoginFailureHandler.java
     ![loginFail](https://github.com/iseuljang/springCommunity/blob/main/screen/login%20fail.jpg)
 
   - **관리자 기능**
@@ -100,6 +106,16 @@
       - 등록되어있는 직원 목록을 조회
       - 조회 조건은 직원 이름, 재직상태, 부서, 직책, 입사일
       - 직원의 재직상태와 부서, 직책을 수정할 수 있음
+    - 소스코드
+      - 관리자컨트롤러 : https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/controller/AdminController.java
+      - 관리자 DAO : https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/dao/AdminDAO.java
+      - 관리자 서비스 : https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/service
+        - AdminService.java
+        - AdminServiceImpl.java
+      - 엑셀 파일 읽기 : https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/service/ExcelUserService.java
+      - 이메일 스케쥴러 : https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/scheduler/EmailScheduler.java
+      - 네이버메일 발송서비스 : https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/service/NaverEmailService.java
+      - 이메일설정 : https://github.com/iseuljang/springCommunity/blob/main/src/main/webapp/WEB-INF/spring/email-context.xml
     <img src="https://github.com/iseuljang/springCommunity/blob/main/screen/%EA%B4%80%EB%A6%AC%EC%9E%90.gif">
     
   - **채팅방 기능**
@@ -135,6 +151,14 @@
       - 채팅방에서 나가기를 누를 경우 나감 상태로 변경되며 채팅방 안에서는 나갔음을 메시지로 표시
       - 채팅방 나감 상태인 직원은 채팅목록에서 제외되며 다시 초대 가능
       - 해당 채팅방의 참가자 전원이 나감 상태인 경우 채팅방 비활성화처리
+    - 소스코드
+      - html, 스크립트 소스 : https://github.com/iseuljang/springCommunity/blob/main/src/main/webapp/WEB-INF/views/include/header.jsp
+      - 채팅 서비스 : https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/service
+        - ChatService.java, ChatServiceImpl.java
+        - 웹소켓 : ChatWebSocketHandler.java, WebSocketConfig.java
+      - 채팅 DAO : https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/dao/ChatDAO.java
+      - 채팅 컨트롤러 : https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/controller/ChatController.java
+      - 필터 : https://github.com/iseuljang/springCommunity/blob/main/src/main/java/com/springCommunity/filter/ContentFilter.java
     <img src="https://github.com/iseuljang/springCommunity/blob/main/screen/%EC%B1%84%ED%8C%85.gif">
     
   - **게시판 CRUD**
