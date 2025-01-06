@@ -8,6 +8,9 @@
 -
 <a href="http://3.39.239.157:8080/community" target="_blank">사내커뮤니티</a>
 
+관리자 아이디 : SYSTEM <br>
+관리자 비밀번호 : 1234
+
 <br>
 
 
