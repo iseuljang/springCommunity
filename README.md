@@ -68,7 +68,7 @@
 🖥담당한 기능
 -
   - **ERD**
-  ![ERD](https://github.com/user-attachments/assets/8c678edd-bfac-41f2-a060-332e73c721b0)
+  ![image](https://github.com/user-attachments/assets/889f176b-76ce-44a5-97ea-ba49f7479491)
   ![image](https://github.com/user-attachments/assets/e7c40f24-6cf8-4dc1-8868-44950389065e)
 
 
