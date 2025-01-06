@@ -4,6 +4,16 @@
 
 <br>
 
+🔗 PPT
+-
+<!--
+<a href="http://jjezen.cafe24.com/bteam" target="_blank">http://jjezen.cafe24.com/bteam</a>
+-->
+[커뮤니티최종발표.pptx](https://github.com/user-attachments/files/18312758/default.pptx)
+
+
+<br>
+
 ## 목차
   - [개발기간](#개발기간)
   - [팀 구성](#팀-구성)
