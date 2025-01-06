@@ -4,11 +4,15 @@
 
 <br>
 
+🔗 완성된 웹 애플리케이션 보기
+-
+<a href="http://3.39.239.157:8080/community" target="_blank">사내커뮤니티</a>
+
+<br>
+
+
 🔗 PPT
 -
-<!--
-<a href="http://jjezen.cafe24.com/bteam" target="_blank">http://jjezen.cafe24.com/bteam</a>
--->
 [커뮤니티최종발표.pptx](https://github.com/user-attachments/files/18312758/default.pptx)
 
 
