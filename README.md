@@ -69,8 +69,9 @@
 -
   - **ERD**
   ![image](https://github.com/user-attachments/assets/889f176b-76ce-44a5-97ea-ba49f7479491)
+<!--
   ![image](https://github.com/user-attachments/assets/e7c40f24-6cf8-4dc1-8868-44950389065e)
-
+-->
 
   - **시퀀스(로그인)**
   ![시퀀스(로그인)](https://github.com/user-attachments/assets/3b47dbd4-28b3-4e22-b30d-8e7e44320e78)
