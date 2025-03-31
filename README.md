@@ -46,7 +46,7 @@
     + 개발 : 비밀번호 재설정, 내정보조회 및 수정, 근태 관리, 복지 관리
   + 팀원 장이슬
     + 기획 : HTML, CSS 제작, 시퀀스(로그인), 프로젝트 주제제안서, 일정관리(노션), ERD
-    + 개발 : 로그인&로그아웃(스프링시큐리티), 채팅방 기능(웹소켓), 관리자 기능, 게시판CRUD, 댓글CRUD, 스프링 필터(XXS 및 비속어처리), 스프링 스케쥴러(회원등록 후 아이디 및 초기비밀번호 이메일 발송)
+    + 개발 : 로그인&로그아웃(스프링시큐리티), 채팅방 기능(웹소켓), 관리자 기능, 게시판CRUD, 댓글CRUD, 스프링 필터(XSS 및 비속어처리), 스프링 스케쥴러(회원등록 후 아이디 및 초기비밀번호 이메일 발송)
   + 팀원 박인재
     + 기획 : HTML, CSS 제작, 요구사항분석서, 프로젝트설계서 작성, PPT
     + 개발 : 부서업무 관리, 주간근무시간 관리, 출퇴근 관리(지오로케이션) 
@@ -135,7 +135,7 @@
       - 채팅 내용입력시 그날의 날짜가 없는 경우 날짜 표시. 해당 날짜에 메시지가 있는 경우 메시지만 추가됨
       - 해당 메시지를 읽지 않은 사람의 수 표시
       - 여러 채팅방을 열어놓은 채로 번갈아 가며 채팅입력 가능
-      - 필터를 사용하여 XXS 방지 및 비속어 처리(웹소켓을 사용하여 입력하기 때문에 처음 입력시는 반영되지만 이후 필터동작하여 처리됨)(<strong>필터</strong>)
+      - 필터를 사용하여 XSS 방지 및 비속어 처리(웹소켓을 사용하여 입력하기 때문에 처음 입력시는 반영되지만 이후 필터동작하여 처리됨)(<strong>필터</strong>)
     - 채팅방 상단고정
       - 즐겨찾는 채팅방등을 상단고정 처리하여 항상 맨위에 조회되게 할 수 있음
     - 채팅방 목록
@@ -167,7 +167,7 @@
     <img src="https://github.com/iseuljang/springCommunity/blob/main/screen/%EC%B1%84%ED%8C%85.gif">
     
   - **게시판 CRUD**
-    - 게시글 등록 및 수정시 필터를 사용하여 XXS 방지 및 비속어 처리
+    - 게시글 등록 및 수정시 필터를 사용하여 XSS 방지 및 비속어 처리
     ![image](https://github.com/user-attachments/assets/4880fe3d-f112-4e0b-9d9d-2066091b498e)
     ![image](https://github.com/user-attachments/assets/95314afb-1a0d-4fda-a17e-2cbb2ac905bf)
     ![image](https://github.com/user-attachments/assets/16335073-0d59-4dba-afaf-f4ddadcf3efd)
@@ -176,7 +176,7 @@
 
 
   - **댓글 CRUD**
-    - 댓글 등록 및 수정시 필터를 사용하여 XXS 방지 및 비속어 처리
+    - 댓글 등록 및 수정시 필터를 사용하여 XSS 방지 및 비속어 처리
     ![image](https://github.com/user-attachments/assets/03ff6aa3-6324-425b-b16e-7a8f85f69249)
     ![image](https://github.com/user-attachments/assets/c80cdab9-9d7e-4789-881b-add82133dd73)
     ![image](https://github.com/user-attachments/assets/c59b38f4-720c-41c3-ac20-c40028528ddc)
