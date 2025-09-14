@@ -591,6 +591,11 @@ function leaveChatRoom(chat_no,user_id) {
     });
 }
 
+const loc = window.location;
+const wsProtocol = (loc.protocol === "https:") ? "wss://" : "ws://";
+const wsHost = loc.host;   // ex) localhost:8080  or  myapp.up.railway.app
+
+
 /* 채팅방 웹소켓 */
 let socket;
 const chatWebSockets = {}; // 채팅방 WebSocket 저장 객체
@@ -598,9 +603,11 @@ function connectWebSocket(chat_no) {
     // 채팅방 번호에 따라 WebSocket을 생성
     if(!chatWebSockets[chat_no]) {
     	/* 시연용 */
-        const socket = new WebSocket("ws://192.168.0.175:8080/community/chat"); 
+        //const socket = new WebSocket("ws://192.168.0.175:8080/community/chat"); 
         //각자 컴퓨터에서 돌릴용
         //const socket = new WebSocket("ws://localhost:8080/community/chat"); 
+        
+        const socket = new WebSocket(wsProtocol + wsHost + "/community/chat");
 
         socket.onopen = function () {
             console.log(`WebSocket 연결 성공: 채팅방 \${chat_no}`);
