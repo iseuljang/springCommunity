@@ -6,10 +6,10 @@
 
 🔗 완성된 웹 애플리케이션 보기
 -
-⚠️ 기존에는 AWS 프리 티어로 배포했으나, 무료 사용 기간 종료로 서비스를 중단했습니다. <br>
-현재는 Railway로 이전했으며, 아래 캡처 화면을 통해 프로젝트의 주요 기능과 UI를 확인하실 수 있습니다.<br><br>
+⚠️ 기존에는 AWS EC2와 RDS를 이용해 배포했으나, 무료 사용 기간 종료로 요금 부담이 예상되어 서비스를 중단했습니다.<br>
+현재는 Render와 RDS를 이용해 배포했으며, 아래 캡처 화면을 통해 프로젝트의 주요 기능과 UI를 확인하실 수 있습니다.<br><br>
 
-<a href="https://community.up.railway.app/" target="_blank">https://community.up.railway.app/</a>
+<a href="https://springcommunity.onrender.com/" target="_blank">https://springcommunity.onrender.com </a>
 
 관리자 아이디 : SYSTEM <br>
 관리자 비밀번호 : 1234
